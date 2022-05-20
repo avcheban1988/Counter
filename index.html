@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger Menu</title>
+</head>
+
+<body>
+    <style>
+.main-display {
+    padding-top: 27rem;
+    padding-bottom: 22.8rem;
+}
+
+.main-display .container {
+    position: relative;
+    z-index: 10;
+}
+
+.main-display__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.main-display__header {
+    max-width: 80rem;
+    margin-bottom: 5rem;
+    font-weight: 700;
+    font-size: 6.4rem;
+    line-height: 140%;
+    color: var(--text-white-color);
+}
+
+.main-display__timer {
+    display: flex;
+}
+
+.timer__item {
+    width: 10.2rem;
+    height: 11.2rem;
+    background-color: gray;
+    flex-direction: column;
+}
+
+.timer__count {
+    font-weight: 700;
+    font-size: 3.6rem;
+    line-height: 140%;
+}
+
+.timer__text {
+    font-weight: 400;
+    font-size: var(--text-size-medium);
+    line-height: 140%;
+    color: var(--text-white-color);
+    opacity: 0.4;
+}
+
+.timer__item:not(:last-child) {
+    margin-right: 3rem;
+}
+
+.main-display__timer {
+    margin-bottom: 7.6rem;
+}
+
+    </style>
+
+
+<section class="main-display">
+    <div class="container">
+        <div class="timer main-display__timer">
+            <div class="timer__item block-center">
+                <div class="timer__count timer__days">18</div>
+                <div class="timer__text">Дней</div>
+            </div>
+            <div class="timer__item block-center">
+                <div class="timer__count timer__hours">18</div>
+                <div class="timer__text">Часов</div>
+            </div>
+            <div class="timer__item block-center">
+                <div class="timer__count timer__minutes">18</div>
+                <div class="timer__text">Минут</div>
+            </div>
+            <div class="timer__item block-center">
+                <div class="timer__count timer__seconds">18</div>
+                <div class="timer__text">Секунд</div>
+            </div>
+        </div>
+    </div>
+    <div class="main-display__background">
+        <img src="img/main-screen__bgc.jpg" alt="">
+    </div>
+</section>
+</body>
+
+
+<script>
+   let data = new Date(); //получаем время и дату компьютера
+
+//пробуем достать часы минуты и секунды
+let hours = data.getHours(),
+    minutes = data.getMinutes(),
+    seconds = data.getSeconds();
+
+//выводим эти цифры в нужные блоки на сайте
+let blockHours = document.querySelector('.timer__hours'),
+    blockMinutes = document.querySelector('.timer__minutes'),
+    blockSeconds = document.querySelector('.timer__seconds'),
+    blockDays = document.querySelector('.timer__days');
+
+blockHours.textContent = hours;
+blockMinutes.textContent = minutes;
+blockSeconds.textContent = seconds;
+
+//для того, чтоб время обновлялось автоматически мы все выше объединим в функцию
+function updateTime() {
+    let data = new Date();
+    let hours = data.getHours(),
+        minutes = data.getMinutes(),
+        seconds = data.getSeconds();
+
+//добавляем "0" если цифра в таймере одна, чтобы было "07"
+    let fhours = hours < 10 ? '0' + hours : hours,
+        fminutes = minutes < 10 ? '0' + minutes : minutes,
+        fseconds = seconds < 10 ? '0' + seconds : seconds;
+
+//и подставляем новые значения в блоки
+    blockHours.textContent = fhours;
+    blockMinutes.textContent = fminutes;
+    blockSeconds.textContent = fseconds;
+}
+
+
+//получаем количество миллисекунд, пройденных с 1970 что-то там года. Для этого берем метод .getTime()
+let data2 = new Date().getTime(),
+//добавляем ДедЛайн и его тоже переводим в миллисекунды
+    deadLine = new Date('2023-05-01').getTime(),
+//считаем разницу между текущем времени и дедлайном
+    timeRemaining = deadLine - data2;
+//для получения количества секунд делим на 1000, минут на
+
+//делаю новую ФУНКЦИЮ, просто для понимания, и там уже будет таймер обратного отсчета
+
+function updateTime2() {
+    let data3 = new Date().getTime(),
+        timeRemaining2 = deadLine - data3,
+        days = Math.floor((timeRemaining2/60/60/1000)/24),
+        hours = Math.floor((timeRemaining2/60/60/1000)%24),
+        minutes = Math.floor((timeRemaining2/60/1000)%60),
+        seconds = Math.floor((timeRemaining2/1000)%60);
+
+//добавляем "0" если цифра в таймере одна, чтобы было "07"
+    let fdays = days < 10 ? '0' + days : days,
+        fhours = hours < 10 ? '0' + hours : hours,
+        fminutes = minutes < 10 ? '0' + minutes : minutes,
+        fseconds = seconds < 10 ? '0' + seconds : seconds;
+
+//и подставляем новые значения в блоки
+    blockDays.textContent = fdays;
+    blockHours.textContent = fhours;
+    blockMinutes.textContent = fminutes;
+    blockSeconds.textContent = fseconds;
+
+//когда время вышло
+    if (timeRemaining2 <= 0) {
+        clearInterval(interval);
+        blockDays.textContent = '00';
+        blockHours.textContent = '00';
+        blockMinutes.textContent = '00';
+        blockSeconds.textContent = '00';
+    }
+
+    blockSeconds.nextElementSibling.textContent = numWord(fseconds, ['секунда', "секунды", "секунд"])
+}
+
+let interval = setInterval(updateTime2, 500)
+
+//меняем слова под таймером в зависимости от времени, минута, минуты, минут и т.д.
+
+let numWord = (value, words) => {
+    value = Math.abs(value) % 100 //число всегда положительное
+    let lastNum = value % 10;
+    if (value > 10 && value < 20) {
+        return words[3]
+    }
+    if (lastNum > 1 && lastNum < 5) {
+        return words[1]
+    }
+    if (lastNum == 1) {
+        return words[0]
+    } else {
+        return words[2]
+    }
+}
+numWord(24, ['секунда', "секунды", "секунд"])
+
+</script>
+
+</html>
